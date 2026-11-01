@@ -13,6 +13,17 @@
         {% endif %}
       </div>
 
+      {% with all_tags=birthday.tags.all %}
+        {% if all_tags %}
+          <p class="mb-1">
+            {{ all_tags|join:", "|lower|capfirst }}
+            {% if birthday.author %}
+              пользователя {{ birthday.author.username }}
+            {% endif %}
+          </p>
+        {% endif %}
+      {% endwith %}
+
       <div class="col-10">
         <div>
           {{ birthday.first_name }}

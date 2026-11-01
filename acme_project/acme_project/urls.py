@@ -8,6 +8,7 @@ from django.contrib.auth import views
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import include, path, reverse_lazy
 from django.views.generic import CreateView
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 
 handler404 = 'core.views.page_not_found'
@@ -34,6 +35,8 @@ urlpatterns = [
             name='logout',
         ),
 ]
+
+urlpatterns += debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(
