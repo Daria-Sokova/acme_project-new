@@ -10,10 +10,12 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     UserPassesTestMixin,
 )
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 
-from .forms import BirthdayForm
-from .models import Birthday
+from .forms import BirthdayForm, CongratulationForm
+from .models import Birthday, Congratulation
 from .utils import calculate_birthday_countdown
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -22,6 +24,19 @@ from django.http import HttpResponse
 @login_required
 def simple_view(request):
     return HttpResponse('Страница для залогиненных пользователей!')
+
+
+@login_required
+@require_POST
+def add_comment(request, pk):
+    birthday = get_object_or_404(Birthday, pk=pk)
+    form = CongratulationForm(request.POST)
+    if form.is_valid():
+        congratulation = form.save(commit=False)
+        congratulation.author = request.user
+        congratulation.birthday = birthday
+        congratulation.save()
+    return redirect('birthday:detail', pk=pk)
 
 class BirthdayListView(ListView):
     model = Birthday
@@ -71,5 +86,9 @@ class BirthdayDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['birthday_countdown'] = calculate_birthday_countdown(
             self.object.birthday
+        )
+        context['form'] = CongratulationForm()
+        context['congratulations'] = (
+            self.object.congratulations.all()
         )
         return context
