@@ -100,4 +100,6 @@ DEFAULT_FROM_EMAIL = 'noreply@acme.local'
 
 LOGIN_REDIRECT_URL = 'pages:homepage'
 
-LOGIN_URL = 'login' 
+LOGIN_URL = 'login'
+
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
